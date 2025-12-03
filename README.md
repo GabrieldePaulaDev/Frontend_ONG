@@ -48,7 +48,7 @@ O foco deste projeto foi o domínio da base da web, sem dependência de framewor
 A organização de pastas separa claramente o conteúdo público do administrativo:
 
 Frontend/ │ ├── Imagens/ # Logos, fotos da ONG e ícones │ ├── LP/ # MÓDULO PÚBLICO │ ├── LP.html # Página Principal (Landing Page) │ └── styleLP.css # Estilização da Landing Page │ ├── Formulario/ 
-# MÓDULO ADMINISTRATIVO │ ├── cadastro.html # Formulário de cadastro externo │ └── ... │ ├── Acesso/ # SISTEMA DE GESTÃO │ ├── acesso.html # Dashboard Principal (Tabela e Modais) │ └── acesso.css # Estilos do Dashboard │ └── README.md # Documentação
+**MÓDULO ADMINISTRATIVO** │ ├── cadastro.html **Formulário de cadastro externo** │ └── ... │ ├── Acesso/ **SISTEMA DE GESTÃO** │ ├── acesso.html **Dashboard Principal (Tabela e Modais)** │ └── acesso.css **Estilos do Dashboard** │ └── README.md **Documentação**
 
 
 ---
@@ -81,13 +81,16 @@ Este é um projeto estático, mas depende da API.
 ## 📸 Screenshots
 
 ### Landing Page
-*(Espaço para colocar um print da LP)*
+<img width="1896" height="908" alt="image" src="https://github.com/user-attachments/assets/93ee3b27-62d5-489a-87ce-db7fdec3040f" />
+
 
 ### Dashboard de Gestão
-*(Espaço para colocar um print da Tabela de Voluntários)*
+<img width="1881" height="922" alt="image" src="https://github.com/user-attachments/assets/974ee71c-33a7-4277-8a42-090550a51a27" />
+
 
 ### Modal de Edição
-*(Espaço para colocar um print do Modal com a gestão de horários)*
+<img width="1894" height="908" alt="image" src="https://github.com/user-attachments/assets/781c5344-7b1f-45c9-9ea3-df7495f98742" />
+
 
 ---
 
