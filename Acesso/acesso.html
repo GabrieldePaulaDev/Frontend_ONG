@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="acesso.css">
+    <link rel="shortcut icon" href="../Imagens/icone_logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Gestão de Voluntários</title>
+</head>
+<body>
+
+    <div class="card-container">
+        
+        <div class="header-row">
+            <h1 class="page-title">
+                <div class="icon-bg"><i data-lucide="heart-handshake"></i></div>
+                Banco de Voluntários
+            </h1>
+            <button class="btn-novo" onclick="openNewModal()">
+                <i data-lucide="plus-circle"></i>
+                Novo Voluntário
+            </button>
+        </div>
+
+        <div class="filters-row">
+            <div class="filter-group" style="min-width: 200px;">
+                <label>Filtro:</label>
+                <select class="form-control" id="searchFilter">
+                    <option value="nome">Nome</option>
+                    <option value="profissao">Profissão</option>
+                    <option value="cpf">CPF</option>
+                </select>
+            </div>
+            <div class="filter-group search-group">
+                <label>Pesquisar:</label>
+                <div class="search-icon"><i data-lucide="search" size="18"></i></div>
+                <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nome, profissão, CPF..." onkeyup="filterTable()">
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <div class="status-toggle">
+                    <div class="status-option active" onclick="setStatusFilter('todos', this)">Todos</div>
+                    <div class="status-option" onclick="setStatusFilter('ativos', this)">Ativos</div>
+                    <div class="status-option" onclick="setStatusFilter('inativos', this)">Inativos</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper" id="tableContainer">
+            <table id="accessTable">
+                <thead>
+                    <tr>
+                        <th width="15%" class="center-text">Data Cadastro</th>
+                        <th width="25%">Profissão</th>
+                        <th width="35%">Nome</th>
+                        <th width="10%" class="center-text">Status</th>
+                        <th width="15%" class="center-text">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon"><i data-lucide="cone" size="48"></i></div>
+            <div class="empty-text">Nenhum voluntário encontrado...</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalNovoAcesso">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">
+                    <i data-lucide="user-plus"></i> Novo Voluntário
+                </div>
+                <button class="btn-close" id="btnCloseX"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formVoluntario">
+                    
+                    <div class="section-header">
+                        <i data-lucide="user"></i> 1. Dados Pessoais e Profissionais
+                    </div>
+                    <div class="form-grid form-grid-2">
+                        <div class="input-wrapper col-span-2">
+                            <label>Nome Completo <span>*</span></label>
+                            <input type="text" class="form-control" id="nome" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Profissão <span>*</span></label>
+                            <input type="text" class="form-control" id="profissao" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Registro Conselho (CRM/CRP)</label>
+                            <input type="text" class="form-control" id="registro">
+                        </div>
+                        <div class="input-wrapper">
+                            <label>RG <span>*</span></label>
+                            <input type="text" class="form-control" id="rg" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>CPF <span>*</span></label>
+                            <input type="text" class="form-control" id="cpf" required>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <i data-lucide="phone"></i> 2. Contatos
+                    </div>
+                    <div class="form-grid form-grid-3">
+                        <div class="input-wrapper">
+                            <label>Celular (Pessoal) <span>*</span></label>
+                            <input type="tel" class="form-control" id="tel_pessoal" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Residencial</label>
+                            <input type="tel" class="form-control" id="tel_residencial">
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Consultório</label>
+                            <input type="tel" class="form-control" id="tel_consultorio">
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <i data-lucide="map-pin"></i> 3. Endereço
+                    </div>
+                    <div class="form-grid form-grid-4">
+                        <div class="input-wrapper">
+                            <label>CEP <span>*</span></label>
+                            <input type="text" class="form-control" id="cep" required>
+                        </div>
+                        <div class="input-wrapper col-span-3">
+                            <label>Logradouro <span>*</span></label>
+                            <input type="text" class="form-control" id="logradouro" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Número <span>*</span></label>
+                            <input type="text" class="form-control" id="numero" required>
+                        </div>
+                        <div class="input-wrapper col-span-2">
+                            <label>Bairro <span>*</span></label>
+                            <input type="text" class="form-control" id="bairro" required>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Cidade <span>*</span></label>
+                            <input type="text" class="form-control" id="cidade" required>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <i data-lucide="calendar-clock"></i> 4. Disponibilidade
+                    </div>
+                    <div class="form-grid form-grid-2" style="grid-template-columns: 180px 1fr;">
+                        <div class="input-wrapper">
+                            <label>Horas Semanais</label>
+                            <input type="number" class="form-control" id="horas" readonly style="background-color: #f0f4f7; font-weight: bold; color: var(--cor4); width: 100%;">
+                        </div>
+                        
+                        <div class="input-wrapper">
+                            <label>Adicionar Período (Início - Fim)</label>
+                            <div style="display: flex; gap: 5px; align-items: center;">
+                                <select id="inputDia" class="form-control" style="flex: 1;">
+                                    <option value="">Dia</option>
+                                    <option>Segunda</option>
+                                    <option>Terça</option>
+                                    <option>Quarta</option>
+                                    <option>Quinta</option>
+                                    <option>Sexta</option>
+                                    <option>Sábado</option>
+                                    <option>Domingo</option>
+                                </select>
+                                <input type="time" id="inputInicio" class="form-control" style="width: 130px;">
+                                <span style="font-weight: bold;">às</span>
+                                <input type="time" id="inputFim" class="form-control" style="width: 130px;">
+                                <button type="button" class="btn-action" style="background-color: var(--cor2); color: white; height: 45px; width: 45px; border-radius: 8px;" onclick="adicionarDisponibilidade()">
+                                    <i data-lucide="plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="input-wrapper" style="grid-column: span 2;">
+                            <label>Horários Selecionados:</label>
+                            <ul id="listaDisponibilidades" style="list-style: none; padding: 10px; background: #f4f7f9; border-radius: 8px; min-height: 50px; display: flex; flex-wrap: wrap; gap: 10px;">
+                                <li style="color: #888; font-size: 0.9rem;">Nenhum horário adicionado.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" id="btnCancel">Cancelar</button>
+                <button class="btn-modal btn-save" onclick="saveData()">
+                    <i data-lucide="check"></i> Salvar Cadastro
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8080/api/voluntarios";
+        const modal = document.getElementById('modalNovoAcesso');
+        let idEdicaoAtual = null;
+        let listaDispTemp = [];
+        let totalHorasCalculado = 0;
+
+        document.addEventListener("DOMContentLoaded", carregarVoluntarios);
+
+        function adicionarDisponibilidade() {
+            const dia = document.getElementById('inputDia').value;
+            const inicio = document.getElementById('inputInicio').value;
+            const fim = document.getElementById('inputFim').value;
+
+            if (!dia || !inicio || !fim) {
+                alert("Preencha o dia, a hora de início e fim!");
+                return;
+            }
+
+            if (inicio >= fim) {
+                alert("A hora final deve ser maior que a inicial!");
+                return;
+            }
+
+            const horarioCombinado = `${inicio} - ${fim}`;
+
+            listaDispTemp.push({ diaSemana: dia, horario: horarioCombinado });
+            
+            calcularTotalHoras();
+            
+            document.getElementById('inputDia').value = "";
+            document.getElementById('inputInicio').value = "";
+            document.getElementById('inputFim').value = "";
+            
+            renderizarDisponibilidades();
+        }
+
+        function removerDisponibilidade(index) {
+            listaDispTemp.splice(index, 1);
+            calcularTotalHoras();
+            renderizarDisponibilidades();
+        }
+
+        function calcularTotalHoras() {
+            let minutosTotais = 0;
+
+            listaDispTemp.forEach(item => {
+                const partes = item.horario.split(' - ');
+                if (partes.length === 2) {
+                    const inicio = partes[0].split(':');
+                    const fim = partes[1].split(':');
+
+                    const minInicio = (parseInt(inicio[0]) * 60) + parseInt(inicio[1]);
+                    const minFim = (parseInt(fim[0]) * 60) + parseInt(fim[1]);
+
+                    minutosTotais += (minFim - minInicio);
+                }
+            });
+
+            totalHorasCalculado = Math.round(minutosTotais / 60);
+            
+            document.getElementById('horas').value = totalHorasCalculado;
+        }
+
+        function renderizarDisponibilidades() {
+            const ul = document.getElementById('listaDisponibilidades');
+            ul.innerHTML = "";
+
+            if (listaDispTemp.length === 0) {
+                ul.innerHTML = '<li style="color: #888; font-size: 0.9rem;">Nenhum horário adicionado.</li>';
+                return;
+            }
+
+            listaDispTemp.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.style.cssText = "background: white; padding: 5px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; font-weight: 500; color: #14506d;";
+                li.innerHTML = `
+                    ${item.diaSemana}: ${item.horario}
+                    <i data-lucide="x" size="14" style="cursor: pointer; color: #e74c3c;" onclick="removerDisponibilidade(${index})"></i>
+                `;
+                ul.appendChild(li);
+            });
+            lucide.createIcons();
+        }
+
+        async function carregarVoluntarios() {
+            try {
+                const response = await fetch(API_URL);
+                const voluntarios = await response.json();
+                
+                const tbody = document.querySelector("#accessTable tbody");
+                tbody.innerHTML = "";
+
+                voluntarios.forEach(v => {
+                    const statusClass = v.ativo ? "badge-status" : "badge-status inactive";
+                    const statusText = v.ativo ? "Ativo" : "Inativo";
+                    
+                    let dataCadastroFormatada = "-";
+                    if(v.dataCadastro) {
+                        const partesData = v.dataCadastro.split('-'); 
+                        if(partesData.length === 3) {
+                            dataCadastroFormatada = `${partesData[2]}/${partesData[1]}/${partesData[0]}`;
+                        } else {
+                            dataCadastroFormatada = new Date(v.dataCadastro).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+                        }
+                    }
+
+                    let botaoAcao = '';
+                    if (v.ativo) {
+                        botaoAcao = `
+                        <button class="btn-action btn-delete" title="Inativar" onclick="deletarVoluntario(${v.idVoluntario})">
+                            <i data-lucide="trash-2" size="16"></i>
+                        </button>`;
+                    } else {
+                        botaoAcao = `
+                        <button class="btn-action" style="color: #00a99d;" title="Reativar" onclick="reativarVoluntario(${v.idVoluntario})">
+                            <i data-lucide="refresh-cw" size="16"></i>
+                        </button>`;
+                    }
+
+                    const tr = document.createElement("tr");
+                    tr.className = "data-row";
+                    tr.innerHTML = `
+                        <td class="center-text" style="font-weight: 500; color: #555;">${dataCadastroFormatada}</td>
+                        <td class="col-email">${v.profissao || '-'}</td>
+                        <td class="col-nome">${v.nome}</td>
+                        <td class="center-text" data-status="${v.ativo ? 'ativo' : 'inativo'}">
+                            <span class="${statusClass}">${statusText}</span>
+                        </td>
+                        <td class="center-text">
+                            <button class="btn-action btn-edit" onclick="openEditModal(${v.idVoluntario})">
+                                <i data-lucide="pencil" size="16"></i>
+                            </button>
+                            ${botaoAcao}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                lucide.createIcons();
+            } catch (error) {
+                console.error("Erro ao carregar dados:", error);
+            }
+        }
+
+        async function openEditModal(id) {
+            try {
+                const response = await fetch(`${API_URL}/${id}`);
+                if (!response.ok) throw new Error("Erro ao buscar dados");
+                const v = await response.json();
+
+                document.getElementById('nome').value = v.nome;
+                document.getElementById('profissao').value = v.profissao;
+                document.getElementById('rg').value = v.rg || ''; 
+                document.getElementById('cpf').value = v.cpf || '';
+                document.getElementById('registro').value = v.registroConselho || '';
+                
+                document.getElementById('cep').value = v.cep || '';
+                document.getElementById('logradouro').value = v.logradouro || '';
+                document.getElementById('numero').value = v.numeroResidencial || '';
+                document.getElementById('bairro').value = v.bairro || '';
+                document.getElementById('cidade').value = v.cidade || '';
+                
+                if (v.telefones && v.telefones.length > 0) {
+                    const tel = v.telefones[0];
+                    document.getElementById('tel_pessoal').value = tel.telefonePessoal || '';
+                    document.getElementById('tel_residencial').value = tel.telefoneResidencial || '';
+                    document.getElementById('tel_consultorio').value = tel.telefoneConsultorio || '';
+                } else {
+                    document.getElementById('tel_pessoal').value = '';
+                    document.getElementById('tel_residencial').value = '';
+                    document.getElementById('tel_consultorio').value = '';
+                }
+
+                listaDispTemp = [];
+                if (v.disponibilidades) {
+                    v.disponibilidades.forEach(d => {
+                        listaDispTemp.push({ diaSemana: d.diaSemana, horario: d.horario });
+                    });
+                }
+                calcularTotalHoras();
+                renderizarDisponibilidades();
+
+                idEdicaoAtual = id;
+                document.getElementById('modalTitle').innerHTML = '<i data-lucide="pencil"></i> Editar Voluntário';
+                modal.classList.add('show');
+                lucide.createIcons();
+
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao carregar dados para edição.");
+            }
+        }
+
+        function openNewModal() {
+            document.getElementById('formVoluntario').reset();
+            idEdicaoAtual = null;
+            listaDispTemp = [];
+            totalHorasCalculado = 0;
+            renderizarDisponibilidades();
+
+            document.getElementById('modalTitle').innerHTML = '<i data-lucide="user-plus"></i> Novo Voluntário';
+            modal.classList.add('show');
+            lucide.createIcons();
+        }
+
+        async function saveData() {
+            const voluntarioDTO = {
+                nome: document.getElementById('nome').value,
+                profissao: document.getElementById('profissao').value,
+                rg: document.getElementById('rg').value,
+                cpf: document.getElementById('cpf').value,
+                registroConselho: document.getElementById('registro').value,
+                cep: parseInt(document.getElementById('cep').value) || 0,
+                logradouro: document.getElementById('logradouro').value,
+                numeroResidencial: parseInt(document.getElementById('numero').value) || 0,
+                bairro: document.getElementById('bairro').value,
+                cidade: document.getElementById('cidade').value,
+                
+                horasSemanaisDisponiveis: totalHorasCalculado,
+
+                telefones: [{
+                    telefonePessoal: document.getElementById('tel_pessoal').value,
+                    telefoneResidencial: document.getElementById('tel_residencial').value,
+                    telefoneConsultorio: document.getElementById('tel_consultorio').value
+                }],
+                disponibilidades: listaDispTemp
+            };
+
+            const metodo = idEdicaoAtual ? "PUT" : "POST";
+            const urlFinal = idEdicaoAtual ? `${API_URL}/${idEdicaoAtual}` : API_URL;
+
+            try {
+                const response = await fetch(urlFinal, {
+                    method: metodo,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(voluntarioDTO)
+                });
+
+                if (response.ok) {
+                    alert(idEdicaoAtual ? 'Cadastro atualizado!' : 'Voluntário cadastrado com sucesso!');
+                    modal.classList.remove('show');
+                    carregarVoluntarios();
+                } else {
+                    const erro = await response.json();
+                    alert("Erro ao salvar: " + (erro.error || "Verifique os dados"));
+                }
+            } catch (error) {
+                console.error("Erro na requisição:", error);
+                alert("Erro de conexão com o servidor.");
+            }
+        }
+
+        async function deletarVoluntario(id) {
+            if(!confirm("Tem certeza que deseja inativar este voluntário?")) return;
+            try {
+                const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                if (response.ok || response.status === 204) {
+                    alert("Voluntário inativado!");
+                    carregarVoluntarios();
+                } else {
+                    alert("Erro ao inativar.");
+                }
+            } catch (error) {
+                console.error("Erro ao deletar:", error);
+            }
+        }
+
+        async function reativarVoluntario(id) {
+            if(!confirm("Deseja reativar este voluntário?")) return;
+            try {
+                const response = await fetch(`${API_URL}/${id}/reativar`, { method: "PATCH" });
+                if (response.ok) {
+                    alert("Voluntário reativado!");
+                    carregarVoluntarios();
+                } else {
+                    alert("Erro ao reativar.");
+                }
+            } catch (error) {
+                console.error("Erro ao reativar:", error);
+            }
+        }
+
+        document.getElementById('btnCloseX').onclick = () => modal.classList.remove('show');
+        document.getElementById('btnCancel').onclick = () => modal.classList.remove('show');
+
+        function filterTable() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('.data-row');
+            let has = false;
+            rows.forEach(row => {
+                if(row.innerText.toLowerCase().includes(input)) {
+                    row.classList.remove('hidden'); has = true;
+                } else row.classList.add('hidden');
+            });
+            document.getElementById('emptyState').style.display = has ? 'none' : 'flex';
+        }
+
+        function setStatusFilter(status, el) {
+            document.querySelectorAll('.status-option').forEach(e => e.classList.remove('active'));
+            el.classList.add('active');
+            
+            const rows = document.querySelectorAll('.data-row');
+            rows.forEach(row => {
+                const statusCell = row.querySelector('[data-status]');
+                const statusValue = statusCell ? statusCell.getAttribute('data-status') : '';
+                
+                if (status === 'todos') row.classList.remove('hidden');
+                else if (status === 'ativos' && statusValue === 'ativo') row.classList.remove('hidden');
+                else if (status === 'inativos' && statusValue === 'inativo') row.classList.remove('hidden');
+                else row.classList.add('hidden');
+            });
+        }
+        
+        lucide.createIcons();
+    </script>
+</body>
+</html>
